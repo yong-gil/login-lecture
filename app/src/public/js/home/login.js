@@ -64,7 +64,7 @@ function registerProcess(){
     /* @~@자 사이, 특수문자포함.. */ 
     if(isNull(req.pwdChk)){alert("PW확인을 입력해주세요."); return;}
     if(isNull(req.email)){alert("EMAIL을 입력해주세요."); return;}
-    if(req.pwd != req.pwdChk){alert("PW를 확인해주세요"); return;}
+    if(req.pwd !== req.pwdChk){alert("PW를 확인해주세요"); return;}
     if(!validEmail(req.email)){alert("EMAIL 형식에 맞게 입력해주세요.");return;}
 
     fetch("/register", {
