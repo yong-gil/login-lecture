@@ -35,8 +35,25 @@ class UserStorage {
         return userInfo;
     }
 
-    static getUsers(...fields){
+    static getUsers(isAll, ...fields){
         //const users = this.#users;
+        // const newUsers = fields.reduce((newUsers, field) => {
+        //     if(users.hasOwnProperty(field)){
+        //         newUsers[field] = users[field];
+        //     }
+        //     return newUsers;
+        // }, {});
+        // return newUsers;
+        return fs.readFile('./src/databases/file/users.json')
+        .then((data) => {
+           return this.#getUsers(data, isAll, fields);
+        })
+        .catch((err) => console.log(err))
+    }
+
+    static #getUsers(data, isAll, fields){
+        const users = JSON.parse(data);
+        if(isAll){return users;}
         const newUsers = fields.reduce((newUsers, field) => {
             if(users.hasOwnProperty(field)){
                 newUsers[field] = users[field];
@@ -44,6 +61,17 @@ class UserStorage {
             return newUsers;
         }, {});
         return newUsers;
+    }
+
+    static async save(userInfo){
+        const users = await this.getUsers(true);
+        //전체 덮어버려서 가져와서 추가해준다.
+        if(users.id.includes(userInfo.id)){return {success:false}}
+        users.id.push(userInfo.id);
+        users.pwd.push(userInfo.pwd);
+        users.email.push(userInfo.email);
+        fs.writeFile("./src/databases/file/users.json", JSON.stringify(users));
+        return {success:true}
     }
 }
 

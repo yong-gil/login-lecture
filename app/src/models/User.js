@@ -5,6 +5,7 @@ const UserStorage  = require("./UserStorage");
 const SUCCESS_MSG  = "로그인 성공";
 const PWD_FAIL_MSG = "비밀번호가 틀렸습니다.";
 const ID_FAIL_MSG  = "아이디가 틀렸습니다.";
+const DUAL_MEMBER_MSG = "이미 가입한 회원입니다.";
 const SUCCESS_MEMBER_MSG  = "회원가입이 성공했습니다.";
 
 class User{
@@ -25,9 +26,14 @@ class User{
         return { success : false , msg : ID_FAIL_MSG };
     }
 
-    register(){
+    async register(){
         const body = this.body;
-        return { success : true, msg : SUCCESS_MEMBER_MSG };
+        const response = await UserStorage.save(body);
+        console.log(response);
+        if(response.success){
+            return {success : response.success, msg : SUCCESS_MEMBER_MSG }
+        }
+        return {success : response.success, msg : DUAL_MEMBER_MSG }
     }
 }
 
