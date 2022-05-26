@@ -12,10 +12,10 @@ class User{
         this.body = body;
     }
 
-    login(){
+    async login(){
         const body = this.body;
-        const { id, pwd } = UserStorage.getUserInfo(body.id);
-
+         const { id, pwd } = await UserStorage.getUserInfo(body.id);
+        console.log("login() : "+await UserStorage.getUserInfo(body.id));
         if(id){
             if(id === body.id && pwd === body.pwd){
                 return { success : true , msg : SUCCESS_MSG };
