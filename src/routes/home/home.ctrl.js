@@ -42,6 +42,11 @@ const process = {
         response.msg = FAIL_MSG;
         return res.json(response);
         */
+    },
+    register : (req, res) => {
+        const user = new Users(req.body);
+        const response = user.register();
+        return res.json(response);
     }
 };
 
