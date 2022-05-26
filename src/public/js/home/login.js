@@ -23,15 +23,15 @@ function loginprocess(){
             "Content-Type" : "application/json"
         },
         body : JSON.stringify(req)
-    }).then((res) => res.json())
+    }).then((res) => res.json()) //프로미스
       .then((res) => {
           console.log(res);
           if(res.success){
-              alert("로그인 성공");
+              alert(res.msg);
               location.href = "/";
               return;
           }
-          alert("로그인 실패");
+          alert(res.msg);
           return;
       })
       .catch((err) => {
