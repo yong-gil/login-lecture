@@ -4,6 +4,8 @@
 const express = require("express");
 const bodyParse = require("body-parser");
 const app = express();
+const dotenv = require("dotenv");
+dotenv.config();
 
 //라우터
 const home = require("./src/routes/home");

@@ -1,7 +1,7 @@
 "use strict"
 
 const { error } = require("console");
-const fs = require("fs").promises;
+const db = require("../config/db");
 
 
 class UserStorage {
@@ -13,18 +13,16 @@ class UserStorage {
     }
 */
     static getUserInfo(id){
-        console.log("id : "+ id);
-        //const users = this.#users;
-        /*promise <pending> User.js에서 데이터를 읽기 전 호출해버림.*/ 
-        return fs.readFile('./src/databases/file/users.json')
-        .then((data) => {
-           return this.#getUserInfo(data, id);
-        })
-        .catch((err) => console.log(err))
+        return new Promise((resolve, reject) => {
+            db.query("select * from users WHERE id = ?", [id], (err, data) => {
+                if(err)reject(err);
+                resolve(data[0]);
+            });            
+
+        });
     }
 
     static #getUserInfo(data, id){
-        console.log(JSON.parse(data));
         const users = JSON.parse(data);
         const idx = users.id.indexOf(id);
         const usersKeys = Object.keys(users)
@@ -35,21 +33,7 @@ class UserStorage {
         return userInfo;
     }
 
-    static getUsers(isAll, ...fields){
-        //const users = this.#users;
-        // const newUsers = fields.reduce((newUsers, field) => {
-        //     if(users.hasOwnProperty(field)){
-        //         newUsers[field] = users[field];
-        //     }
-        //     return newUsers;
-        // }, {});
-        // return newUsers;
-        return fs.readFile('./src/databases/file/users.json')
-        .then((data) => {
-           return this.#getUsers(data, isAll, fields);
-        })
-        .catch((err) => console.log(err))
-    }
+    static getUsers(isAll, ...fields){}
 
     static #getUsers(data, isAll, fields){
         const users = JSON.parse(data);
@@ -64,14 +48,13 @@ class UserStorage {
     }
 
     static async save(userInfo){
-        const users = await this.getUsers(true);
-        //전체 덮어버려서 가져와서 추가해준다.
-        if(users.id.includes(userInfo.id)){return {success:false}}
-        users.id.push(userInfo.id);
-        users.pwd.push(userInfo.pwd);
-        users.email.push(userInfo.email);
-        fs.writeFile("./src/databases/file/users.json", JSON.stringify(users));
-        return {success:true}
+        return new Promise((resolve, reject) => {
+            db.query("INSERT INTO users (id, pwd, email) VALUES (?, ?, ?)", [userInfo.id, userInfo.pwd, userInfo.email], (err, data) => {
+                if(err)reject(err);
+                resolve({success : true});
+            });            
+
+        });
     }
 }
 

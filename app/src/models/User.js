@@ -15,25 +15,33 @@ class User{
 
     async login(){
         const body = this.body;
-         const { id, pwd } = await UserStorage.getUserInfo(body.id);
-        console.log("login() : "+await UserStorage.getUserInfo(body.id));
-        if(id){
-            if(id === body.id && pwd === body.pwd){
-                return { success : true , msg : SUCCESS_MSG };
+        try{
+            const { id, pwd } = await UserStorage.getUserInfo(body.id);
+ 
+            if(id){
+                if(id === body.id && pwd === body.pwd){
+                    return { success : true , msg : SUCCESS_MSG };
+                }
+                return { success : false , msg : PWD_FAIL_MSG };
             }
-            return { success : false , msg : PWD_FAIL_MSG };
+            return { success : false , msg : ID_FAIL_MSG };
+        }catch(err){
+            console.log(err);
         }
-        return { success : false , msg : ID_FAIL_MSG };
     }
 
     async register(){
         const body = this.body;
-        const response = await UserStorage.save(body);
-        console.log(response);
-        if(response.success){
-            return {success : response.success, msg : SUCCESS_MEMBER_MSG }
+        try{
+            const response = await UserStorage.save(body);
+            console.log(response);
+            if(response.success){
+                return {success : response.success, msg : SUCCESS_MEMBER_MSG }
+            }
+            return {success : response.success, msg : DUAL_MEMBER_MSG }           
+        }catch(err){
+            console.log(err);
         }
-        return {success : response.success, msg : DUAL_MEMBER_MSG }
     }
 }
 
